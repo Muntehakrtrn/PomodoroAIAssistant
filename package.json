@@ -1,0 +1,16 @@
+{
+  "name": "pomodoroai",
+  "version": "1.0.0",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "node tests/store.test.js"
+  },
+  "dependencies": {
+    "nedb": "^1.8.0",
+    "sqlite3": "^5.1.7"
+  },
+  "devDependencies": {
+    "electron": "^36.2.0"
+  }
+}

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🫸Pomodoro AI Asistan🫷</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 2rem;
+    }
+    #modeDisplay {
+      font-size: 24px;
+      margin-bottom: 0.5rem;
+    }
+    #timerDisplay {
+      font-size: 48px;
+      margin: 0.5rem 0 1rem;
+    }
+    .button-group {
+      margin-bottom: 1rem;
+    }
+    .button-group button {
+      padding: 0.5rem 1rem;
+      margin: 0 0.5rem;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    #sessionCount {
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Pomodoro AI Asistan</h1>
+  <div id="modeDisplay">Çalışma</div>
+  <div id="timerDisplay">25:00</div>
+  <div class="button-group">
+  <button id="startBtn">Başlat</button>
+  <button id="stopBtn">Durdur</button>
+  <button id="resetBtn">Sıfırla</button>
+  <button id="clearSessionsBtn">Etüt Sıfırla</button>
+  </div>
+  <div id="sessionCount">Toplam etüt sayısı: 0</div>
+  <script src="./app.js"></script>
+</body>
+</html>

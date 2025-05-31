@@ -1,0 +1,2 @@
+# PomodoroAIAssistant
+yazilim mühendisliği projesi

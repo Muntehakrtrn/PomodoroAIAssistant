@@ -1,0 +1,19 @@
+# Node.js bağımlılık klasörü
+node_modules/
+
+# VSCode ayarları
+.vscode/
+
+# Derlenen / build klasörleri
+dist/
+build/
+
+# Log dosyaları
+*.log
+
+# İşletim sistemi artık dosyaları
+Thumbs.db
+.DS_Store
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
