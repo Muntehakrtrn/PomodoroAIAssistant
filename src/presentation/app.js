@@ -40,31 +40,44 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Mod adını güncelle, alarmı çal ve mola başladığında etüt kaydet
-  timer.on('modeChange', (mode) => {
-    console.log(`🔄 modeChange: artık mode=${mode}`); // Log: mod değişimi
-    modeDisplay.textContent = mode === 'work' ? 'Çalışma' : 'Mola';
+// Mevcut modeChange kısmını şu şekilde güncelle:
 
-    // Alarm sesi çal
-    alarmSound.currentTime = 0;
-    alarmSound.play().catch(() => {
-      console.warn('Ses oynatma izni reddedildi.');
-    });
+timer.on('modeChange', (mode) => {
+  console.log(`🔄 modeChange: artık mode=${mode}`); 
+  modeDisplay.textContent = mode === 'work' ? 'Çalışma' : 'Mola';
 
-    // Mola modu başladıysa 
-    if (mode === 'break') {
-      addSession({
-        mode: 'work',
-        duration: timer.workSec,
-        timestamp: new Date()
-      }, (err) => {
-        if (err) return console.error(err);
-        // Kaydettikten sonra toplamı getir ve UI’da göster
-        getSessionCount((err, count) => {
-          if (!err) sessionCountEl.textContent = `Toplam etüt sayısı: ${count}`;
-        });
-      });
-    }
+  // Alarm sesi çal
+  alarmSound.currentTime = 0;
+  alarmSound.play().catch(() => {
+    console.warn('Ses oynatma izni reddedildi.');
   });
+
+  // Mola modu başladıysa
+  if (mode === 'break') {
+    console.log('>>> modeChange içinde break moduna girdik, addSession çağırıyoruz.');
+    addSession({
+      mode: 'work',
+      duration: timer.workSec,
+      timestamp: new Date()
+    }, (err, newDoc) => {
+      if (err) {
+        console.error('addSession sırasında hata:', err);
+        return;
+      }
+      console.log('>>> addSession callback tetiklendi, yeniDoküman:', newDoc);
+
+      getSessionCount((errCount, count) => {
+        if (errCount) {
+          console.error('getSessionCount sırasında hata:', errCount);
+          return;
+        }
+        console.log('>>> getSessionCount callback tetiklendi, count:', count);
+        sessionCountEl.textContent = `Toplam etüt sayısı: ${count}`;
+      });
+    });
+  }
+});
+
 
   // Başlat butonu
   startBtn.addEventListener('click', () => {
