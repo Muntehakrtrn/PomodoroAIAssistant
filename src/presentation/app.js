@@ -27,13 +27,14 @@ document.addEventListener('DOMContentLoaded', () => {
   );
 
   // Uygulama açıldığında önceki toplam etüt sayısını getir
-  getSessionCount((err, count) => {
+  getSessionCount((err, count) => 
+  {
     if (!err) sessionCountEl.textContent = `Toplam etüt sayısı: ${count}`;
   });
 
   // Her saniye süreyi güncelle
   timer.on('tick', (_mode, secondsLeft) => {
-    console.log(`⌛ tick: mode=${_mode}, secondsLeft=${secondsLeft}`); 
+    console.log(` tick: mode=${_mode}, secondsLeft=${secondsLeft}`); 
     const mins = String(Math.floor(secondsLeft / 60)).padStart(2, '0');
     const secs = String(secondsLeft % 60).padStart(2, '0');
     timerDisplay.textContent = `${mins}:${secs}`;

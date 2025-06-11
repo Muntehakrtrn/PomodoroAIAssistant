@@ -44,10 +44,32 @@ function deletePlan(id, cb) {
     cb(err, numRemoved);
   });
 }
+// 5) Oturum sayısını döner (session sayısını kullanıyorsan bu isim iyi)
+function getSessionCount(cb) {
+  db.count({}, (err, count) => {
+    cb(err, count);
+  });
+}
+// 6) Yeni bir etüt oturumu ekler
+function addSession(session, cb) {
+  db.insert(session, (err, newDoc) => {
+    cb(err, newDoc);
+  });
+}
+
+// 7) Tüm oturumları siler
+function clearSessions(cb) {
+  db.remove({}, { multi: true }, (err, numRemoved) => {
+    cb(err, numRemoved);
+  });
+}
 
 module.exports = {
   createPlan,
   getAllPlans,
   updatePlan,
-  deletePlan
+  deletePlan,
+  getSessionCount,
+   addSession,
+  clearSessions
 };
