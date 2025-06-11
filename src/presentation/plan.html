@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Plan Yönetimi Test</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    form, table { margin-bottom: 1rem; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border: 1px solid #ccc; padding: 8px; }
+    button { margin-right: 5px; }
+    h2 { margin-top: 2rem; }
+    #updateModal {
+      display: none;
+      position: fixed; top: 20%; left: 50%;
+      transform: translateX(-50%);
+      background: #fff; padding: 20px; border: 1px solid #888;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Plan Yönetimi Test Sayfası</h1>
+
+  <!-- 1) Plan Ekleme Formu -->
+  <section id="plan-form">
+    <h2>Yeni Plan Ekle</h2>
+    <form id="createForm">
+      <div>
+        <label for="createTitle">Başlık:</label><br/>
+        <input type="text" id="createTitle" placeholder="Başlık girin" required />
+      </div>
+      <div>
+        <label for="createDesc">Açıklama:</label><br/>
+        <input type="text" id="createDesc" placeholder="Açıklama girin" required />
+      </div>
+      <div>
+        <label for="createDate">Tarih:</label><br/>
+        <input type="date" id="createDate" required />
+      </div>
+      <button type="submit">Ekle</button>
+    </form>
+    <hr/>
+  </section>
+
+  <!-- 2) Plan Listeleme Tablosu -->
+  <section id="plan-list">
+    <h2>Planlar</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Başlık</th><th>Açıklama</th><th>Tarih</th><th>İşlemler</th>
+        </tr>
+      </thead>
+      <tbody id="plansBody">
+        <!-- JS burayı dolduracak -->
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 3) Güncelleme Modal -->
+  <div id="updateModal">
+    <h3>Planı Güncelle</h3>
+    <form id="updateForm">
+      <div>
+        <label for="updateTitle">Başlık:</label><br/>
+        <input type="text" id="updateTitle" required />
+      </div>
+      <div>
+        <label for="updateDesc">Açıklama:</label><br/>
+        <input type="text" id="updateDesc" required />
+      </div>
+      <div>
+        <label for="updateDate">Tarih:</label><br/>
+        <input type="date" id="updateDate" required />
+      </div>
+      <button type="submit">Kaydet</button>
+      <button type="button" id="cancelUpdate">İptal</button>
+    </form>
+  </div>
+
+  <!-- 4) JavaScript: CRUD + Debug Logları -->
+  <script>
+    console.log('plan.html script loaded');
+
+    // a) Business katmanını import et
+    const store = require('../data/nedbStore.js');
+    console.log('nedbStore module loaded:', store);
+
+    const { createPlan, getAllPlans, updatePlan, deletePlan } = store;
+
+    // b) Form ve tablo elemanlarını seç
+    const createForm  = document.getElementById('createForm');
+    const plansBody   = document.getElementById('plansBody');
+    const updateModal = document.getElementById('updateModal');
+    const updateForm  = document.getElementById('updateForm');
+
+    let currentUpdateId = null;
+
+    // c) İlk listeleme
+    renderPlans();
+
+    // d) Plan ekleme
+    createForm.addEventListener('submit', e => {
+      e.preventDefault();
+      console.log('submit triggered');
+      const plan = {
+        title: document.getElementById('createTitle').value,
+        description: document.getElementById('createDesc').value,
+        date: document.getElementById('createDate').value
+      };
+      console.log('createPlan called with:', plan);
+      createPlan(plan, (err, newDoc) => {
+        console.log('createPlan callback:', err, newDoc);
+        if (err) return alert('Plan eklenirken hata: ' + err);
+        createForm.reset();
+        renderPlans();
+      });
+    });
+
+    // e) Listeleme fonksiyonu
+    function renderPlans() {
+      console.log('getAllPlans called');
+      getAllPlans((err, docs) => {
+        console.log('getAllPlans callback:', err, docs);
+        plansBody.innerHTML = '';
+        if (err) return console.error(err);
+        docs.forEach(doc => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${doc.title}</td>
+            <td>${doc.description}</td>
+            <td>${doc.date}</td>
+            <td>
+              <button class="btn-edit"   data-id="${doc._id}">Güncelle</button>
+              <button class="btn-delete" data-id="${doc._id}">Sil</button>
+            </td>
+          `;
+          plansBody.appendChild(tr);
+        });
+      });
+    }
+
+    // f) Silme handler
+    plansBody.addEventListener('click', e => {
+      if (!e.target.classList.contains('btn-delete')) return;
+      const id = e.target.dataset.id;
+      console.log('deletePlan called with id:', id);
+      deletePlan(id, (err, num) => {
+        console.log('deletePlan callback:', err, num);
+        if (err) return alert('Silme hatası: ' + err);
+        renderPlans();
+      });
+    });
+
+    // g) Güncelleme butonuna tıklama → modal aç
+    plansBody.addEventListener('click', e => {
+      if (!e.target.classList.contains('btn-edit')) return;
+      currentUpdateId = e.target.dataset.id;
+      console.log('updateModal opening for id:', currentUpdateId);
+      getAllPlans((err, docs) => {
+        const plan = docs.find(p => p._id === currentUpdateId);
+        document.getElementById('updateTitle').value = plan.title;
+        document.getElementById('updateDesc').value  = plan.description;
+        document.getElementById('updateDate').value  = plan.date;
+        updateModal.style.display = 'block';
+      });
+    });
+
+    // h) Güncelleme formunu kaydet
+    updateForm.addEventListener('submit', e => {
+      e.preventDefault();
+      console.log('updatePlan called for id:', currentUpdateId);
+      const updatedData = {
+        title: document.getElementById('updateTitle').value,
+        description: document.getElementById('updateDesc').value,
+        date: document.getElementById('updateDate').value
+      };
+      updatePlan(currentUpdateId, updatedData, (err, num) => {
+        console.log('updatePlan callback:', err, num);
+        if (err) return alert('Güncelleme hatası: ' + err);
+        updateModal.style.display = 'none';
+        renderPlans();
+      });
+    });
+
+    // i) Güncelleme modalını kapatma
+    document.getElementById('cancelUpdate').addEventListener('click', () => {
+      updateModal.style.display = 'none';
+    });
+  </script>
+</body>
+</html>
+

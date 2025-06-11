@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Plan Ekle, Güncelle & Sil Test</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    form, table { margin-bottom: 1rem; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    button { margin-right: 5px; }
+    #updateModal {
+      display: none;
+      position: fixed; top: 20%; left: 50%;
+      transform: translateX(-50%);
+      background: #fff; padding: 20px;
+      border: 1px solid #888;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Plan Yönetimi Test Sayfası</h1>
+
+  <!-- Plan Ekleme Formu -->
+  <h2>Yeni Plan Ekle</h2>
+  <form id="createForm">
+    <input type="text" id="createTitle" placeholder="Başlık" required />
+    <input type="text" id="createDesc"  placeholder="Açıklama" required />
+    <input type="date" id="createDate"  required />
+    <button type="submit">Ekle</button>
+  </form>
+  <hr/>
+
+  <!-- Plan Listeleme Tablosu -->
+  <h2>Planlar</h2>
+  <table>
+    <thead>
+      <tr><th>Başlık</th><th>Açıklama</th><th>Tarih</th><th>İşlemler</th></tr>
+    </thead>
+    <tbody id="plansBody">
+      <!-- JavaScript ile doldurulacak -->
+    </tbody>
+  </table>
+
+  <!-- Güncelleme Modal -->
+  <div id="updateModal">
+    <h3>Plan Güncelle</h3>
+    <form id="updateForm">
+      <input type="text" id="updateTitle" placeholder="Başlık" required /><br/><br/>
+      <input type="text" id="updateDesc" placeholder="Açıklama" required /><br/><br/>
+      <input type="date" id="updateDate" required /><br/><br/>
+      <button type="submit">Kaydet</button>
+      <button type="button" id="cancelUpdate">İptal</button>
+    </form>
+  </div>
+
+  <!-- Buraya JavaScript gelecek -->
+  <script>
+    // JS kodları eklenecek
+  </script>
+
+</body>
+</html>
