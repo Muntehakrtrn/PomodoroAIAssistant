@@ -34,7 +34,7 @@ function createMainWindow() {
   });
   Menu.setApplicationMenu(Menu.buildFromTemplate(menuTemplate));
   win.loadFile(path.join(__dirname, 'src/presentation/index.html'));
-    win.webContents.openDevTools(); // BURAYI SİLERSEN DEV TOOLS KAPANIR!
+    win.webContents.openDevTools(); 
 }
 
 app.whenReady().then(createMainWindow);
