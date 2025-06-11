@@ -3,49 +3,51 @@
 const Datastore = require('nedb');
 const path      = require('path');
 
+// Veritabanını yükle (sessions.db adında aynı klasörde)
 const db = new Datastore({
   filename: path.join(__dirname, 'sessions.db'),
   autoload: true
 });
 
-// 1) Yeni bir oturum (etüt) ekler.
-//    Kaydetme tamamlandığında callback’e (err, newDoc) döner.
-function addSession(session, cb) {
-  db.insert(session, (err, newDoc) => {
-    if (err) {
-      return cb(err);
-    }
-    // Konsola log atarak gerçekten callback’e girildiğini görebiliriz
-    console.log('nedbStore.addSession: kayıt eklendi, newDoc =', newDoc);
-    cb(null, newDoc);
+// 1) Yeni bir plan ekler
+function createPlan(plan, cb) {
+  console.log('nedbStore.createPlan, incoming:', plan);
+  db.insert(plan, (err, newDoc) => {
+    console.log('nedbStore.insert callback:', err, newDoc);
+    cb(err, newDoc);
   });
 }
 
-// 2) Veritabanındaki toplam oturum sayısını sayar.
-//    Sonuç olarak callback’e (err, count) döner.
-function getSessionCount(cb) {
-  db.count({}, (err, count) => {
-    if (err) {
-      return cb(err);
-    }
-    console.log('nedbStore.getSessionCount: toplam count =', count);
-    cb(null, count);
+// 2) Tüm planları getirir
+function getAllPlans(cb) {
+  console.log('nedbStore.getAllPlans');
+  db.find({}, (err, docs) => {
+    console.log('nedbStore.find callback:', err, docs);
+    cb(err, docs);
   });
 }
 
-// 3) Tüm oturumları siler. callback’e (err, numRemoved) döner.
-function clearSessions(cb) {
-  db.remove({}, { multi: true }, (err, numRemoved) => {
-    if (err) {
-      return cb(err);
-    }
-    console.log('nedbStore.clearSessions: silinen kayıt sayısı =', numRemoved);
-    cb(null, numRemoved);
+// 3) Var olan bir planı günceller
+function updatePlan(id, updatedData, cb) {
+  console.log('nedbStore.updatePlan:', id, updatedData);
+  db.update({ _id: id }, { $set: updatedData }, {}, (err, numReplaced) => {
+    console.log('nedbStore.update callback:', err, numReplaced);
+    cb(err, numReplaced);
+  });
+}
+
+// 4) Belirli bir planı siler
+function deletePlan(id, cb) {
+  console.log('nedbStore.deletePlan:', id);
+  db.remove({ _id: id }, {}, (err, numRemoved) => {
+    console.log('nedbStore.remove callback:', err, numRemoved);
+    cb(err, numRemoved);
   });
 }
 
 module.exports = {
-  addSession,
-  getSessionCount,
-  clearSessions
+  createPlan,
+  getAllPlans,
+  updatePlan,
+  deletePlan
 };
